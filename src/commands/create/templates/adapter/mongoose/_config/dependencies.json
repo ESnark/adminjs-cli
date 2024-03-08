@@ -1,4 +1,4 @@
 {
-  "@adminjs/mongoose": "^4.0.0",
-  "mongoose": "^7.6.6"
+  "@adminjs/mongoose": "^4.1.0",
+  "mongoose": "^8.0.0"
 }
