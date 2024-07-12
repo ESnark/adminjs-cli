@@ -17,6 +17,9 @@ export class BaseSetupHandler extends BaseCommandHandler<CreateCommandInput> {
     await this.modifyPackageName();
     await this.copyDotFile('.eslintrc.cjs');
     await this.copyDotFile('.prettierrc');
+    if (this.options.packageManager === 'yarn') {
+      await this.setupYarnrc(!!this.options.yarnPnp);
+    }
     logger.info('Base template setup successful.');
   }
 
@@ -51,5 +54,11 @@ export class BaseSetupHandler extends BaseCommandHandler<CreateCommandInput> {
       entry,
       destination,
     );
+  }
+
+  protected async setupYarnrc(pnpEnabled: boolean) {
+    const yarnrcPath = path.join(process.cwd(), this.options.projectName, '.yarnrc.yml');
+    const content = `nodeLinker: ${pnpEnabled ? 'pnp' : 'node-modules'}\n`;
+    await fs.writeFile(yarnrcPath, content, 'utf8');
   }
 }
