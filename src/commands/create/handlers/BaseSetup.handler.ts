@@ -58,7 +58,18 @@ export class BaseSetupHandler extends BaseCommandHandler<CreateCommandInput> {
 
   protected async setupYarnrc(pnpEnabled: boolean) {
     const yarnrcPath = path.join(process.cwd(), this.options.projectName, '.yarnrc.yml');
-    const content = `nodeLinker: ${pnpEnabled ? 'pnp' : 'node-modules'}\n`;
+    let content = pnpEnabled ? 'nodeLinker: pnp' : 'nodeLinker: node-modules';
+
+    // An workaround for dependencies problem
+    // Ref: https://github.com/ueberdosis/tiptap/issues/3746
+    if (pnpEnabled) {
+      content += `
+packageExtensions:
+  '@tiptap/starter-kit@^2.0.0':
+    peerDependencies:
+      '@tiptap/pm': '^2.0.0'`;
+    }
+
     await fs.writeFile(yarnrcPath, content, 'utf8');
   }
 }
